@@ -7,7 +7,8 @@ OBJS = main.o\
 # TOOLPREFIX = i386-jos-elf
 
 # Using native tools (e.g., on X86 Linux)
-#TOOLPREFIX = 
+
+TOOLPREFIX = i686-elf-
 
 # Try to infer the correct TOOLPREFIX if not set
 ifndef TOOLPREFIX
@@ -27,6 +28,7 @@ endif
 
 # If the makefile can't find QEMU, specify its path here
 # QEMU = qemu-system-i386
+QEMU = /opt/homebrew/Cellar/qemu/8.2.0/bin/qemu-system-i386
 
 # Try to infer the correct QEMU
 ifndef QEMU
@@ -46,7 +48,7 @@ QEMU = $(shell if which qemu > /dev/null; \
 	echo "***" 1>&2; exit 1)
 endif
 
-CC = $(TOOLPREFIX)gcc
+CC = $(TOOLPREFIX)gcc -Wno-error=infinite-recursion -Wno-error=array-bounds
 AS = $(TOOLPREFIX)gas
 LD = $(TOOLPREFIX)ld
 OBJCOPY = $(TOOLPREFIX)objcopy
