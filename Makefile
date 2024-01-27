@@ -1,20 +1,7 @@
-OBJS = \
-	console.o\
-	ioapic.o\
-	lapic.o\
-	main.o\
-	mp.o\
-	picirq.o\
-	uart.o\
-	string.o\
-	proc.o\
-	spinlock.o\
-	trapasm.o\
-	trap.o\
-	vectors.o\
+OBJS = main.o
 
 # Cross-compiling (e.g., on Mac OS X)
-TOOLPREFIX = i686-elf-
+# TOOLPREFIX = i386-jos-elf
 
 # Using native tools (e.g., on X86 Linux)
 #TOOLPREFIX = 
@@ -36,7 +23,8 @@ TOOLPREFIX := $(shell if i386-jos-elf-objdump -i 2>&1 | grep '^elf32-i386$$' >/d
 endif
 
 # If the makefile can't find QEMU, specify its path here
-QEMU = /opt/homebrew/Cellar/qemu/8.2.0/bin/qemu-system-i386
+# QEMU = qemu-system-i386
+
 # Try to infer the correct QEMU
 ifndef QEMU
 QEMU = $(shell if which qemu > /dev/null; \
@@ -55,7 +43,7 @@ QEMU = $(shell if which qemu > /dev/null; \
 	echo "***" 1>&2; exit 1)
 endif
 
-CC = $(TOOLPREFIX)gcc -Wno-error=infinite-recursion -Wno-error=array-bounds
+CC = $(TOOLPREFIX)gcc
 AS = $(TOOLPREFIX)gas
 LD = $(TOOLPREFIX)ld
 OBJCOPY = $(TOOLPREFIX)objcopy
@@ -92,10 +80,6 @@ kernel: $(OBJS) entry.o kernel.ld
 	$(OBJDUMP) -S kernel > kernel.asm
 	$(OBJDUMP) -t kernel | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > kernel.sym
 
-
-vectors.S: vectors.pl
-	./vectors.pl > vectors.S
-
 # Prevent deletion of intermediate files, e.g. cat.o, after first build, so
 # that disk image changes after first build are persistent until clean.  More
 # details:
@@ -106,18 +90,18 @@ vectors.S: vectors.pl
 
 clean: 
 	rm -f *.tex *.dvi *.idx *.aux *.log *.ind *.ilg \
-	*.o *.d *.asm *.sym bootblock \
-	kernel xv6.img vectors.S \
-	.gdbinit
+	*.o *.d *.asm *.sym bootblock entryother \
+	kernel xv6.img .gdbinit
 
+# run in emulators
 # try to generate a unique GDB port
-GDBPORT = $(shell expr `id -u` % 5000 + 25001)
+GDBPORT = $(shell expr `id -u` % 5000 + 25000)
 # QEMU's gdb stub command line changed in 0.11
 QEMUGDB = $(shell if $(QEMU) -help | grep -q '^-gdb'; \
 	then echo "-gdb tcp::$(GDBPORT)"; \
 	else echo "-s -p $(GDBPORT)"; fi)
 ifndef CPUS
-CPUS := 1
+	CPUS := 1
 endif
 
 # For debugging
@@ -133,4 +117,3 @@ qemu: xv6.img
 qemu-gdb: xv6.img .gdbinit
 	@echo "*** Now run 'gdb'." 1>&2
 	$(QEMU) -nographic $(QEMUOPTS) -S $(QEMUGDB)
-
