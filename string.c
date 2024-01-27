@@ -2,13 +2,13 @@
 #include "x86.h"
 
 void*
-memset(void *dst, int c, uint n)
+memset(void *dst, int c, uint n) // set a block of memory to a specified value
 {
-  if ((int)dst%4 == 0 && n%4 == 0){
+  if ((int)dst%4 == 0 && n%4 == 0){ // check if 4 byte aligned
     c &= 0xFF;
-    stosl(dst, (c<<24)|(c<<16)|(c<<8)|c, n/4);
+    stosl(dst, (c<<24)|(c<<16)|(c<<8)|c, n/4); // if aligned, use this optimized approach which sets 4 byte words at a time
   } else
-    stosb(dst, c, n);
+    stosb(dst, c, n); // else, store byte by byte
   return dst;
 }
 
@@ -36,7 +36,7 @@ memmove(void *dst, const void *src, uint n)
 
   s = src;
   d = dst;
-  if(s < d && s + n > d){
+  if(s < d && s + n > d){ // take care of this case....
     s += n;
     d += n;
     while(n-- > 0)

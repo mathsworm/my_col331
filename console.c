@@ -9,7 +9,7 @@
 static void consputc(int);
 
 static void
-printint(int xx, int base, int sign)
+printint(int xx, int base, int sign) // sign tells us if we should print the sign
 {
   static char digits[] = "0123456789abcdef";
   char buf[16];
@@ -84,10 +84,10 @@ cprintf(char *fmt, ...)
 #define BACKSPACE 0x100
 
 void
-consputc(int c)
+consputc(int c) // put a character onto the console
 {
   if(c == BACKSPACE){
-    uartputc('\b'); uartputc(' '); uartputc('\b');
+    uartputc('\b'); uartputc(' '); uartputc('\b'); // this is to erase the next character from the display
   } else
     uartputc(c);
 }

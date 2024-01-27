@@ -10,7 +10,7 @@
 static int uart;    // is there a uart?
 
 void
-uartinit(void)
+uartinit(void) // uart stands for universal asychronous receiver transmitter. uart is a hardware communication protocol. 
 {
   char *p;
 
@@ -36,7 +36,7 @@ uartinit(void)
 }
 
 void
-uartputc(int c)
+uartputc(int c) //sends a char to uart for transimission 
 {
   int i;
 
