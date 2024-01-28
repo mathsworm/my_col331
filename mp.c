@@ -11,7 +11,7 @@
 #include "mmu.h"
 #include "proc.h"
 
-struct cpu cpus[NCPU];
+struct cpu cpus[NCPU]; // NCPU is the max number of processors
 int ncpu;
 uchar ioapicid;
 
@@ -36,7 +36,7 @@ mpsearch1(uint a, int len)
   addr = (uchar*) a;
   e = addr+len;
   for(p = addr; p < e; p += sizeof(struct mp))
-    if(memcmp(p, "_MP_", 4) == 0 && sum(p, sizeof(struct mp)) == 0)
+    if(memcmp(p, "_MP_", 4) == 0 && sum(p, sizeof(struct mp)) == 0) // sum is for checksum of the block of memory 
       return (struct mp*)p;
   return 0;
 }
@@ -80,12 +80,12 @@ mpconfig(struct mp **pmp)
   if((mp = mpsearch()) == 0 || mp->physaddr == 0)
     return 0;
   // conf = (struct mpconf*) P2V((uint) mp->physaddr);
-  conf = (struct mpconf*) (uint) mp->physaddr;
-  if(memcmp(conf, "PCMP", 4) != 0)
+  conf = (struct mpconf*) (uint) mp->physaddr; // converting from physical address to virtual address
+  if(memcmp(conf, "PCMP", 4) != 0) // checks for the signature
     return 0;
-  if(conf->version != 1 && conf->version != 4)
+  if(conf->version != 1 && conf->version != 4) // checks for the version
     return 0;
-  if(sum((uchar*)conf, conf->length) != 0)
+  if(sum((uchar*)conf, conf->length) != 0) // checksum = 0?
     return 0;
   *pmp = mp;
   return conf;
@@ -107,7 +107,7 @@ mpinit(void)
   lapic = (uint*)conf->lapicaddr;
   for(p=(uchar*)(conf+1), e=(uchar*)conf+conf->length; p<e; ){
     switch(*p){
-    case MPPROC:
+    case MPPROC: // if the entry corresponds to a processor, do the following
       proc = (struct mpproc*)p;
       if(ncpu < NCPU) {
         cpus[ncpu].apicid = proc->apicid;  // apicid may differ from ncpu
