@@ -57,7 +57,7 @@ uartputc(int c)
 static int
 uartgetc(void)
 {
-  if(!uart)
+  if(!uart) // important to check if uart is ready for use
     return -1;
   if(!(inb(COM1+5) & 0x01))
     return -1;

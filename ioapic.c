@@ -65,7 +65,7 @@ ioapicinit(void)
 }
 
 void
-ioapicenable(int irq, int cpunum)
+ioapicenable(int irq, int cpunum) // this tells us the cpu number to which the interrupt should be routed
 {
   // Mark interrupt edge-triggered, active high,
   // enabled, and routed to the given cpunum,
