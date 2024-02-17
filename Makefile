@@ -18,6 +18,8 @@ OBJS = \
 
 # Cross-compiling (e.g., on Mac OS X)
 # TOOLPREFIX = i386-jos-elf
+TOOLPREFIX = i686-elf-
+QEMU = /opt/homebrew/Cellar/qemu/8.2.0/bin/qemu-system-i386
 
 # Using native tools (e.g., on X86 Linux)
 #TOOLPREFIX = 
@@ -59,7 +61,7 @@ QEMU = $(shell if which qemu > /dev/null; \
 	echo "***" 1>&2; exit 1)
 endif
 
-CC = $(TOOLPREFIX)gcc
+CC = $(TOOLPREFIX)gcc -Wno-error=infinite-recursion -Wno-error=array-bounds
 AS = $(TOOLPREFIX)gas
 LD = $(TOOLPREFIX)ld
 OBJCOPY = $(TOOLPREFIX)objcopy
